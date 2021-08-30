@@ -14,7 +14,7 @@ runs:
         git_ref_type=$(echo "${git_ref}" | cut -d '/' -f 2)
 
         if [[ "${git_ref_type}" != "tags" ]]; then
-          echo "Action should only run for 'tags' refs"
+          echo "Action should only run for 'tags' refs, was: '${git_ref}'"
           exit 0
         fi
 
@@ -22,7 +22,7 @@ runs:
 
         match="v[0-9]+.[0-9]+.[0-9]+"
         if ! [[ "${git_ref}" =~ $match ]]; then
-          echo "Action should only run for tags that match the regex '$match'"
+          echo "Action should only run for tags that match the regex '$match', was: '${git_ref}'"
           exit 0
         fi
 
