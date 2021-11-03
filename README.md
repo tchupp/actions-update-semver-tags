@@ -54,7 +54,8 @@ name: Release Tagger
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v([0-9]+)\.([0-9]+)\.([0-9]+)'
+      - 'v([0-9]+)\.([0-9]+)\.([0-9]+)-(alpha|beta|rc)'
   release:
     types:
       - published
