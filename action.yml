@@ -20,18 +20,19 @@ runs:
 
         git_ref=$(echo "${git_ref}" | cut -d '/' -f 3-)
 
-        match="v[0-9]+.[0-9]+.[0-9]+"
+        match="^(v?)([0-9]+)\.([0-9]+)\.([0-9]+)((-([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?(\+[0-9a-z-]+)?)$"
         if ! [[ "${git_ref}" =~ $match ]]; then
           echo "Action should only run for tags that match the regex '$match', was: '${git_ref}'"
           exit 0
         fi
 
-        prefix=$(echo "${git_ref}" | sed -E 's/([^0-9]*)([0-9]*)\.([0-9]*)\.([0-9]*)/\1/')
-        major=$(echo "${git_ref}" | sed -E 's/([^0-9]*)([0-9]*)\.([0-9]*)\.([0-9]*)/\2/')
-        minor=$(echo "${git_ref}" | sed -E 's/([^0-9]*)([0-9]*)\.([0-9]*)\.([0-9]*)/\3/')
-        patch=$(echo "${git_ref}" | sed -E 's/([^0-9]*)([0-9]*)\.([0-9]*)\.([0-9]*)/\4/')
+        prefix=$(echo "${git_ref}" | sed -E "s/$match/\1/")
+        major=$(echo "${git_ref}" | sed -E "s/$match/\2/")
+        minor=$(echo "${git_ref}" | sed -E "s/$match/\3/")
+        patch=$(echo "${git_ref}" | sed -E "s/$match/\4/")
+        suffix=$(echo "${git_ref}" | sed -E "s/$match/\5/")
 
-        git tag -f "${prefix}${major}" "${release_sha}"
-        git tag -f "${prefix}${major}.${minor}" "${release_sha}"
+        git tag -f "${prefix}${major}${suffix}" "${release_sha}"
+        git tag -f "${prefix}${major}.${minor}${suffix}" "${release_sha}"
 
         git push --tags -f
